@@ -92,28 +92,123 @@
 
     <div id="qr-modal" class="hidden" onclick="this.classList.add('hidden')">
         <div class="menu-content" style="text-align:center;">
-            <h3>Ваша визитка</h3>
-            <div style="background: white; padding: 15px; display: inline-block; border-radius: 10px;">
-                <img id="qr-img" src="" style="width: 200px; height: 200px;">
-            </div>
-            <p>Дайте другу отсканировать этот код</p>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NAKA</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* ГЛАВНЫЕ ПРАВИЛА */
+        :root { --blue: #007BFF; --bg: #f4f7f9; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); height: 100vh; overflow: hidden; }
+        .hidden { display: none !important; }
+
+        /* ЭКРАНЫ */
+        .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10; display: flex; flex-direction: column; }
+        
+        /* БИОМЕТРИЯ И ВХОД */
+        #biometric-screen, #auth-screen { justify-content: center; align-items: center; text-align: center; z-index: 100; background: linear-gradient(135deg, #007BFF, #0056b3); color: white; }
+        .card { background: white; padding: 30px; border-radius: 20px; color: #333; width: 85%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+        /* ШАПКА */
+        header { background: var(--blue); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* ВКЛАДКИ */
+        .tabs { display: flex; background: white; border-bottom: 1px solid #ddd; }
+        .tab { flex: 1; text-align: center; padding: 15px; font-weight: bold; color: #888; }
+        .tab.active { color: var(--blue); border-bottom: 3px solid var(--blue); }
+
+        /* СПИСОК ЧАТОВ */
+        .chat-list { flex: 1; overflow-y: auto; background: white; }
+        .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--blue); color: white; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-weight: bold; }
+
+        /* КНОПКИ */
+        .btn-main { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; width: 100%; margin-top: 10px; cursor: pointer; }
+        #add-contact-btn { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: var(--blue); color: white; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; z-index: 50; }
+
+        /* МОДАЛКИ */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; }
+        
+        /* ОКНО ЧАТА */
+        #chat-window { z-index: 150; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; background: #e5ddd5; }
+        .bubble { padding: 8px 12px; border-radius: 10px; margin: 5px 0; max-width: 80%; }
+        .bubble.in { align-self: flex-start; background: white; }
+        .bubble.out { align-self: flex-end; background: #dcf8c6; }
+        .chat-footer { padding: 10px; background: white; display: flex; gap: 10px; }
+        .chat-footer input { flex: 1; border: 1px solid #ddd; padding: 10px; border-radius: 20px; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div id="biometric-screen" class="screen">
+        <div class="card">
+            <span class="material-icons" style="font-size: 60px; color: var(--blue);">fingerprint</span>
+            <h2>NAKA Secure</h2>
+            <button class="btn-main" onclick="unlockApp()">ВОЙТИ</button>
         </div>
     </div>
 
-    <div id="add-modal" class="hidden" onclick="this.classList.add('hidden')">
-        <div class="menu-content" onclick="event.stopPropagation()">
+    <div id="auth-screen" class="screen hidden">
+        <div class="card">
+            <div style="width:70px; height:70px; background: url('1772107040214.jpg'); background-size: cover; margin: 0 auto 15px; border-radius: 50%;"></div>
+            <h3>Добро пожаловать</h3>
+            <input type="text" id="user-name" placeholder="Ваше имя" style="width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+            <button class="btn-main" onclick="login()">НАЧАТЬ ЧАТ</button>
+        </div>
+    </div>
+
+    <div id="main-screen" class="screen hidden">
+        <header>
+            <h1 style="margin:0; font-size: 20px;">NAKA</h1>
+            <span class="material-icons" onclick="logout()">exit_to_app</span>
+        </header>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('chats')">ЧАТЫ</div>
+            <div class="tab" onclick="switchTab('profile')">ПРОФИЛЬ</div>
+        </div>
+        <div id="tab-chats" class="chat-list"></div>
+        <button id="add-contact-btn" onclick="openModal('add-modal')"><span class="material-icons">add</span></button>
+    </div>
+
+    <div id="chat-window" class="screen hidden">
+        <header>
+            <span class="material-icons" onclick="closeChat()">arrow_back</span>
+            <span id="chat-title" style="flex:1; margin-left:15px; font-weight:bold;">Чат</span>
+        </header>
+        <div id="messages"></div>
+        <div class="chat-footer">
+            <input type="text" id="msg-input" placeholder="Сообщение...">
+            <button onclick="sendMessage()" style="background:none; border:none; color:var(--blue);"><span class="material-icons">send</span></button>
+        </div>
+    </div>
+
+    <div id="add-modal" class="modal hidden" onclick="closeModal('add-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <h3>Найти человека</h3>
-            <input type="text" id="new-name" placeholder="Имя (необязательно)" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;">
-            <input type="tel" id="new-phone" placeholder="Номер телефона" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;">
-            <div style="display:flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-main" onclick="confirmAddContact()">ЧАТ</button>
-                <button class="btn-main" style="background:#333; width: 60px;" onclick="startQRScan()">
-                    <span class="material-icons">qr_code_scanner</span>
-                </button>
-            </div>
+            <input type="tel" id="new-phone" placeholder="Номер телефона" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+            <button class="btn-main" onclick="confirmAddContact()">СОЗДАТЬ ЧАТ</button>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Небольшие правки логики прямо здесь для надежности
+        function unlockApp() { 
+            document.getElementById('biometric-screen').classList.add('hidden');
+            if(!localStorage.getItem('naka_user')) {
+                document.getElementById('auth-screen').classList.remove('hidden');
+            } else {
+                document.getElementById('main-screen').classList.remove('hidden');
+                renderChats();
+            }
+        }
+    </script>
 </body>
 </html>
+
