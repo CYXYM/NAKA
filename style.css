@@ -1,0 +1,109 @@
+:root {
+    --naka-blue: #007BFF;
+    --naka-dark: #1a1a1a;
+    --bg-light: #f4f7f9;
+    --text-main: #333;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+/* Красивая карточка входа */
+#auth-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #007BFF, #00c6ff);
+}
+
+.auth-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 80%;
+    max-width: 320px;
+}
+
+.btn-main {
+    background: var(--naka-blue);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Шапка приложения */
+header {
+    background: var(--naka-blue);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Вкладки */
+.tabs {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+}
+
+.tab.active {
+    color: var(--naka-blue);
+    border-bottom: 3px solid var(--naka-blue);
+}
+
+/* Список чатов */
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    margin-bottom: 1px;
+    transition: 0.2s;
+}
+
+.chat-item:active { background: #f0f0f0; }
+
+/* Плавающая кнопка + */
+#add-contact-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--naka-blue);
+    color: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,123,255,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Скрытые экраны */
+.hidden { display: none !important; }

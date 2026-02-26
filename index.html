@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NAKA</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/jpeg" href="1772107040214.jpg">
+    <meta name="theme-color" content="#007BFF">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+
+    <div id="biometric-screen" class="hidden">
+        <div class="bio-content">
+            <span class="material-icons bio-icon" style="font-size: 80px; color: #007BFF;">face</span>
+            <h2 style="margin-top: 20px;">NAKA Secure</h2>
+            <button class="btn-main" onclick="unlockApp()" style="width: auto; padding: 15px 40px; margin-top: 20px;">ВХОД</button>
+        </div>
+    </div>
+
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="logo" style="background: url('1772107040214.jpg'); background-size: cover; border-radius: 50%; width: 80px; height: 80px; margin: 0 auto 20px;"></div>
+            <h2>NAKA</h2>
+            <input type="text" id="user-name" placeholder="Ваше имя...">
+            <button class="btn-main" onclick="login()">ВОЙТИ</button>
+        </div>
+    </div>
+
+    <div id="main-screen" class="hidden">
+        <header>
+            <div id="header-default">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <h1 style="margin:0; font-size: 24px;">NAKA</h1>
+                    <div id="online-indicator"></div>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <span class="material-icons" onclick="toggleSearch(true)">search</span>
+                    <span class="material-icons" onclick="logout()">exit_to_app</span>
+                </div>
+            </div>
+            <div id="header-search" class="hidden">
+                <span class="material-icons" onclick="toggleSearch(false)">arrow_back</span>
+                <input type="text" id="search-input" placeholder="Поиск..." oninput="globalSearch()">
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('chats')">ЧАТЫ</div>
+            <div class="tab" onclick="switchTab('profile')">ПРОФИЛЬ</div>
+        </div>
+
+        <div id="tab-chats" class="chat-list"></div>
+        <button id="add-contact-btn" onclick="promptAddContact()"><span class="material-icons">person_add</span></button>
+
+        <div id="tab-profile" class="hidden">
+            <div id="profile-container" style="padding: 20px; text-align: center;">
+                <img id="my-avatar" src="1772107040214.jpg" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #007BFF;">
+                <h2 id="profile-name-display" style="margin-top: 15px;">Имя</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button class="btn-main" onclick="showMyQR()" style="background: #333;">
+                        <span class="material-icons">qr_code</span> Мой QR-код
+                    </button>
+                </div>
+                <div class="settings-item" onclick="toggleDarkMode()" style="margin: 20px 0; display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 10px;">
+                    <span>Темная тема</span>
+                    <span class="material-icons">brightness_4</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-window" class="hidden">
+        <div class="chat-header">
+            <span class="material-icons" onclick="closeChat()">arrow_back</span>
+            <div class="chat-info" style="flex: 1; margin-left: 10px;">
+                <span id="chat-title">Чат</span>
+            </div>
+            <div class="header-icons">
+                <span class="material-icons" onclick="startCall('voice')">call</span>
+            </div>
+        </div>
+        <div id="messages"></div>
+        <div class="footer">
+            <span class="material-icons">sentiment_satisfied_alt</span>
+            <input type="text" id="msg-input" placeholder="Сообщение">
+            <button id="send-btn" onclick="sendMessage()"><span class="material-icons">send</span></button>
+        </div>
+    </div>
+
+    <div id="qr-modal" class="hidden" onclick="this.classList.add('hidden')">
+        <div class="menu-content" style="text-align:center;">
+            <h3>Ваша визитка</h3>
+            <div style="background: white; padding: 15px; display: inline-block; border-radius: 10px;">
+                <img id="qr-img" src="" style="width: 200px; height: 200px;">
+            </div>
+            <p>Дайте другу отсканировать этот код</p>
+        </div>
+    </div>
+
+    <div id="add-modal" class="hidden" onclick="this.classList.add('hidden')">
+        <div class="menu-content" onclick="event.stopPropagation()">
+            <h3>Найти человека</h3>
+            <input type="text" id="new-name" placeholder="Имя (необязательно)" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;">
+            <input type="tel" id="new-phone" placeholder="Номер телефона" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd;">
+            <div style="display:flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-main" onclick="confirmAddContact()">ЧАТ</button>
+                <button class="btn-main" style="background:#333; width: 60px;" onclick="startQRScan()">
+                    <span class="material-icons">qr_code_scanner</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

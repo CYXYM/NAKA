@@ -1,0 +1,6 @@
+{
+  "appId": "com.naka.app",
+  "appName": "NAKA",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
